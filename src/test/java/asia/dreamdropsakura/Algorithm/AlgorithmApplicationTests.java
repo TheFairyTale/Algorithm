@@ -54,8 +54,8 @@ public class AlgorithmApplicationTests {
             listNode1 = listNode;
             integers.add(listNode1.getVal());
         }
-        
-        if (newInts != null) integers.addAll(new ArrayList<Integer>(Arrays.asList(newInts)));
+        // todo 问题
+//        if (newInts != null) integers.addAll(new ArrayList<Integer>(Arrays.asList(newInts)));
 
         int[] returnReadyInts = integers.stream().mapToInt(new ToIntFunction<Integer>() {
             @Override
