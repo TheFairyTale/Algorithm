@@ -20,20 +20,41 @@ import org.springframework.context.annotation.Bean;
 @SpringBootApplication
 public class AlgorithmApplication {
 
-	static final String topicExchangeName = "spring-boot-exchange";
+	public static final String topicExchangeName = "spring-boot-exchange";
 
 	static final String queueName = "spring-boot";
 
+	/**
+	 * This method creates an AMQP queue.
+	 *
+	 * @return
+	 */
 	@Bean
 	Queue queue() {
 		return new Queue(queueName, false);
 	}
 
+	/**
+	 * This method creates a topic exchange
+	 *
+	 * @return
+	 */
 	@Bean
 	TopicExchange exchange() {
 		return new TopicExchange(topicExchangeName);
 	}
 
+	/**
+	 * This binding method binds Queue and Exchange together,
+	 * defining the behavior that occurs when RabbitTemplate publishes to an exchange.
+	 *
+	 * Be notice that Spring AMQP requires that the Queue, the TopicExchange, and the Binding be declared as top-level
+	 * Spring beans in order to be set up properly.
+	 *
+	 * @param queue
+	 * @param exchange
+	 * @return
+	 */
 	@Bean
 	Binding binding(Queue queue, TopicExchange exchange) {
 		return BindingBuilder.bind(queue).to(exchange).with("org.spring.#");
@@ -56,8 +77,16 @@ public class AlgorithmApplication {
 		return container;
 	}
 
+	/**
+	 * This method is registered as a message listener in the container (defined in container()).
+	 * It listens for messages on the spring-boot queue
+	 *
+	 * @param receiver
+	 * @return
+	 */
 	@Bean
 	MessageListenerAdapter listenerAdapter(Receiver receiver) {
+		// 将在收到消息后调用入参的Receiver 类中的 asia.dreamdropsakura.Algorithm.receiver.receiveMessage 方法
 		return new MessageListenerAdapter(receiver, "receiveMessage");
 	}
 
